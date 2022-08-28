@@ -1,13 +1,12 @@
 import Task from "./Task/index.js"
 
-export default class TaskManager{
+class TaskManager{
     name : string
     tasks : Task []
     activeTasks: Task []
     inactiveTasks: Task []
 
-    constructor(name?: string){
-        this.name = name ?? "TaskManager";
+    constructor(){
         this.tasks = [];
     }
 
@@ -126,3 +125,5 @@ export default class TaskManager{
     }
     
 }
+
+export default new TaskManager();
