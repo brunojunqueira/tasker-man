@@ -1,4 +1,4 @@
-import Task from "./src/Task/index.js"
+import Task from "../Task/index.js"
 
 class TaskManager{
     name : string
@@ -126,4 +126,4 @@ class TaskManager{
     
 }
 
-export default new TaskManager();
+export default TaskManager;
