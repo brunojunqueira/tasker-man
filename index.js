@@ -1,4 +1,4 @@
-import TaskManager from './src/TaskManager'
+import TaskManager from './src/TaskManager.js'
 
 const TaskerMan = new TaskManager();
 

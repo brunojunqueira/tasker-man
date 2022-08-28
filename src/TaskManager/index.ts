@@ -1,13 +1,14 @@
 import Task from "../Task/index.js"
 
-class TaskManager{
-    name : string
+export default class TaskManager{
     tasks : Task []
     activeTasks: Task []
     inactiveTasks: Task []
 
     constructor(){
         this.tasks = [];
+        this.activeTasks = [];
+        this.inactiveTasks = [];
     }
 
     private findTaskIndex(list: Task [], id: number){
@@ -125,5 +126,3 @@ class TaskManager{
     }
     
 }
-
-export default TaskManager;
