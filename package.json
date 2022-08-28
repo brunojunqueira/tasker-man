@@ -1,6 +1,6 @@
 {
   "name": "tasker-man",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A tasks management application",
   "main": "index.ts",
   "author": "Bruno Junqueira",
