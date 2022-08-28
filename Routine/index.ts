@@ -13,5 +13,3 @@ class Routine{
 
     }
 }
-
-module.exports = Routine;

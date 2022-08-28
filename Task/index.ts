@@ -7,8 +7,8 @@ export default class Task{
     readonly repeat : boolean = false
     readonly time : number
 
-    private interval : NodeJS.Timer
-    private timeout : NodeJS.Timer
+    private interval : number
+    private timeout : number
 
     constructor(id: number, callback: () => any, time: number, repeat? : boolean, name?: string){
         this.name = name ?? `Task ${id}`;
