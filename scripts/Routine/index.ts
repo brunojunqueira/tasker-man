@@ -1,3 +1,5 @@
+'use strict';
+
 import Task from '../Task/index.js'
 
 interface RoutineOptions{
@@ -6,7 +8,7 @@ interface RoutineOptions{
 
 }
 
-class Routine{
+export default class Routine{
     tasks: Task []
 
     constructor(tasks: Task [], options? :RoutineOptions){
