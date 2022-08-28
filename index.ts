@@ -1,4 +1,4 @@
-import Task from "./Task/index.js"
+import Task from "./src/Task/index.js"
 
 class TaskManager{
     name : string
