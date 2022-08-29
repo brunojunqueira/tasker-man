@@ -7,6 +7,10 @@ A simple task manager.
 ### TaskerMan
 #### TaskerMan is a instance of class TaskManager.
 
+```js
+  import TaskerMan from "tasker-man";
+```
+
 | Proprieties     | Type       | Description                                        |
 | :-------------- | :--------- | :------------------------------------------------- |
 | `tasks`         | `Task []`  | Array with all tasks created in TaskManager.       |
