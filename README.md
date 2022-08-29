@@ -4,6 +4,16 @@
 A simple task manager.
 ## Documentation
 
+### TaskerMan
+#### TaskerMan is a instance of class TaskManager.
+
+| Proprieties     | Type       | Description                                        |
+| :-------------- | :--------- | :------------------------------------------------- |
+| `tasks`         | `Task []`  | Array with all tasks created in TaskManager.       |
+| `activeTasks`   | `Task []`  | Array with all **active** tasks in TaskManager.    |
+| `inactiveTasks` | `Task []`  | Array with all **inactive** tasks in TaskManager.  |
+
+---
 ### createTask()
 #### Create a Task on Task Manager.
 Example:
@@ -17,9 +27,9 @@ Example:
 
 | Parameter   | Type       |Required| Description                        |
 | :---------- | :--------- |:------ |:---------------------------------- |
-| `callback`  | `function` | `Yes`  | Function will be executed by task. |
-| `timeout`   | `number`   | `Yes`  | Delay Timeout in **seconds**. If 0 Task will run instantly and **cannot** repeat |
-| `options`   | `object`   | `No`   | Task options                       |
+| `callback`  | `function` | Yes    | Function will be executed by task. |
+| `timeout`   | `number`   | Yes    | Delay Timeout in **seconds**. If 0 Task will run instantly and **cannot** repeat |
+| `options`   | `object`   | No     | Task options                       |
 
 #### - options -
 
@@ -43,9 +53,9 @@ Example:
 
 | Type       | Description                                                    |
 | :--------- | :------------------------------------------------------------- |
-| `Success`  | Inform Task had been created. |
-| `Error`    | If timeout be lesser than 1s and not equal 0. |
-| `Advertise`| If Task does not received a name. |
+| `SUCCESS`  | Inform Task had been created.                                  |
+| `ERROR`    | If timeout be lesser than 1s and not equal 0.                  |
+| `ADVERTISE`| If Task does not received a name.                              |
 
 ---
 ### deleteTask()
@@ -55,19 +65,19 @@ Example:
   TaskerMan.deleteTask( 0 );
 ```
 
-| Parâmetro   | Tipo       | Required | Descrição                                   |
-| :---------- | :--------- | :------- | :------------------------------------------ |
-| `id`        | `number`   | `Yes`    | Task ID on Task Manager.                    |
+| Parâmetro   | Tipo       | Required | Descrição                 |
+| :---------- | :--------- | :------- | :------------------------ |
+| `id`        | `number`   | Yes      | Task ID on Task Manager.  |
 
 **OBS: Task ID Can be got by using 'getTaskId( )' function!**
 
 #### - logs -
 
-| Type       | Description                                                    |
-| :--------- | :------------------------------------------------------------- |
-| `Success`  | Inform Task had been deleted. |
-| `Error`    | If Task does not exist. |
-| `Error`    | If Task is active. |
+| Type       | Description                   |
+| :--------- | :---------------------------- |
+| `SUCCESS`  | Inform Task had been deleted. |
+| `ERROR`    | If Task does not exist.       |
+| `ERROR`    | If Task is active.            |
 
 ---
 ### getTaskId()
@@ -79,9 +89,9 @@ Example:
   TaskerMan.deleteTask(TaskID);
 ```
 
-| Parâmetro   | Tipo       | Required | Descrição                                   |
-| :---------- | :--------- | :------- | :------------------------------------------ |
-| `name`      | `string`   | `Yes`    | Task name on Task Manager.                  |
+| Parâmetro   | Tipo       | Required | Descrição                    |
+| :---------- | :--------- | :------- | :--------------------------- |
+| `name`      | `string`   | Yes      | Task name on Task Manager.   |
 
 ---
 ### startTask()
@@ -93,18 +103,18 @@ Example:
   TaskerMan.startTask( TaskID );
 ```
 
-| Parâmetro   | Tipo       | Required | Descrição                                   |
-| :---------- | :--------- | :------- | :------------------------------------------ |
-| `id`        | `number`   | `Yes`    | Task ID on Task Manager.                    |
+| Parâmetro   | Tipo       | Required | Descrição                 |
+| :---------- | :--------- | :------- | :------------------------ |
+| `id`        | `number`   | Yes      | Task ID on Task Manager.  |
 
 **OBS: Task ID Can be got by using 'getTaskId( )' function!**
 #### - logs -
 
-| Type       | Description                                                    |
-| :--------- | :------------------------------------------------------------- |
-| `Success`  | Inform Task had been started. |
-| `Error`    | If Task does not exist. |
-| `Error`    | If Task is already active. |
+| Type       | Description                   |
+| :--------- | :---------------------------- |
+| `SUCCESS`  | Inform Task had been started. |
+| `ERROR`    | If Task does not exist.       |
+| `ERROR`    | If Task is already active.    |
 
 ---
 ### stopTask()
@@ -118,13 +128,13 @@ Example:
 
 | Parâmetro   | Tipo       | Required | Descrição                                   |
 | :---------- | :--------- | :------- | :------------------------------------------ |
-| `id`        | `number`   | `Yes`    | Task ID on Task Manager.                    |
+| `id`        | `number`   | Yes      | Task ID on Task Manager.                    |
 
 **OBS: Task ID Can be got by using 'getTaskId( )' function!**
 #### - logs -
 
-| Type       | Description                                                    |
-| :--------- | :------------------------------------------------------------- |
-| `Success`  | Inform Task had been stopped. |
-| `Error`    | If Task does not exist. |
-| `Error`    | If Task is not active. |
+| Type       | Description                   |
+| :--------- | :---------------------------- |
+| `SUCCESS`  | Inform Task had been stopped. |
+| `ERROR`    | If Task does not exist.       |
+| `ERROR`    | If Task is not active.        |
