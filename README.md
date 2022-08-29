@@ -69,7 +69,7 @@ Example:
   TaskerMan.deleteTask( 0 );
 ```
 
-| Parâmetro   | Tipo       | Required | Descrição                 |
+| Parameter   | Type       | Required | Description               |
 | :---------- | :--------- | :------- | :------------------------ |
 | `id`        | `number`   | Yes      | Task ID on Task Manager.  |
 
@@ -93,7 +93,7 @@ Example:
   TaskerMan.deleteTask(TaskID);
 ```
 
-| Parâmetro   | Tipo       | Required | Descrição                    |
+| Parameter   | Type       | Required | Description                  |
 | :---------- | :--------- | :------- | :--------------------------- |
 | `name`      | `string`   | Yes      | Task name on Task Manager.   |
 
@@ -107,7 +107,7 @@ Example:
   TaskerMan.startTask( TaskID );
 ```
 
-| Parâmetro   | Tipo       | Required | Descrição                 |
+| Parameter   | Type       | Required | Description               |
 | :---------- | :--------- | :------- | :------------------------ |
 | `id`        | `number`   | Yes      | Task ID on Task Manager.  |
 
@@ -130,7 +130,7 @@ Example:
   TaskerMan.stopTask( TaskID );
 ```
 
-| Parâmetro   | Tipo       | Required | Descrição                                   |
+| Parameter   | Type       | Required | Description                                 |
 | :---------- | :--------- | :------- | :------------------------------------------ |
 | `id`        | `number`   | Yes      | Task ID on Task Manager.                    |
 
