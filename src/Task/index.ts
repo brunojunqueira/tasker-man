@@ -1,5 +1,3 @@
-'use strict';
-
 interface TaskOptions {
   name?: string;
   repeat?: boolean;
@@ -18,10 +16,19 @@ class Task {
   private timeout: any;
 
   constructor(id: number, callback: () => any, time: number, options?: TaskOptions) {
-    this.name = options?.name ?? `Task ${id}`;
+
     this.id = id;
+    this.name = `Task ${id}`;
+    this.repeat = false;
+
+    if(options){
+      if(options.name)
+        this.name = options.name;
+      if(options.repeat)
+        this.repeat = false;
+    } 
+    
     this.callback = callback;
-    this.repeat = options?.repeat ?? false;
     this.time = time * 1000;
     this.isActive = false;
 

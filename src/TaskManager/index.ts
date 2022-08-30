@@ -1,5 +1,3 @@
-'use strict';
-
 import { Task, TaskOptions } from '../Task/index.js';
 
 class TaskManager {
@@ -47,13 +45,13 @@ class TaskManager {
     this.tasks.forEach((task) => {
       if (task.name === name) return task.id;
     });
-    return null;
+    return -1;
   }
   /**
    * @brief Create a new Task to current TaskManager.
-   * @param callback [ () => Any ] Function that will be executed by task.
-   * @param timeout [ Number ] - Time delay in seconds task will be executed. ( If timeout be 0, task will execute instantly. And CAN NOT be repeated. )
-   * @param options [ TaskOptions ] - Task will repeat?
+   * @param callback [ function ] Function that will be executed by task.
+   * @param timeout [ number ] - Time delay in seconds task will be executed. ( If timeout be 0, task will execute instantly. And CAN NOT be repeated. )
+   * @param options [ TaskOptions ] - Task options.
    * @log
    */
   createTask(callback: () => any, timeout: number, options?: TaskOptions) {
@@ -61,13 +59,18 @@ class TaskManager {
       console.log(
         "[ ERROR ] - To avoid issues, timeout cannot be lesser than 1s or negative. If your looking for delay or fast repeated tasks, please use 'setTimeout()' or 'setInterval()'. Task NOT created!",
       );
-      return;
+      return null;
     }
-    if (!options?.name) {
+    if (!(options && options.name)) {
       console.log('[ ADVERTISE ] - We recommended to name Tasks for easily manipulation.');
     }
 
-    this.tasks.push(new Task(this.tasks.length, callback, timeout, options));
+    const newTask = new Task(this.tasks.length, callback, timeout, options);
+
+    this.tasks.push(newTask);
+    this.inactiveTasks.push(newTask);
+
+    return newTask;
   }
   /**
    * @brief Start an inactive Task from current TaskManager.

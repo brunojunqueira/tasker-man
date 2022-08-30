@@ -1,5 +1,3 @@
-'use strict';
-
 import { Task } from '../Task/index.js';
 
 interface RoutineOptions {
