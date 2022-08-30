@@ -1,15 +1,40 @@
 
-# tasker-man
+# Tasker Man(ager)
+
+[![NPM version](http://img.shields.io/npm/v/tasker-man.svg)](https://www.npmjs.com/package/tasker-man)
+[![Downloads](https://img.shields.io/npm/dm/tasker-man.svg)](https://www.npmjs.com/package/tasker-man)
+[![Build Status](https://github.com/node-schedule/node-schedule/workflows/ci/badge.svg)](https://github.com/node-schedule/node-schedule/actions)
+
+[![NPM](https://nodei.co/npm/tasker-man.png)](https://nodei.co/npm/tasker-man/)
 
 A simple task manager.
+
+## Usage
+
+### Installation
+
+You can install using [npm](https://www.npmjs.com/package/tasker-man) and [yarn](https://yarnpkg.com/package/tasker-man).
+
+#### npm
+```
+npm install tasker-man
+```
+
+#### yarn
+```
+yarn add tasker-man
+```
+
+### Import
+```js
+import TaskerMan from "tasker-man";
+```
+
 ## Documentation
 
-### TaskerMan
-#### TaskerMan is a instance of class TaskManager.
+### TaskManager
+Main class of application that contains all functions and integrations needed to create, run, stop and delete Tasks.
 
-```js
-  import TaskerMan from "tasker-man";
-```
 
 | Proprieties     | Type       | Description                                        |
 | :-------------- | :--------- | :------------------------------------------------- |
@@ -17,16 +42,18 @@ A simple task manager.
 | `activeTasks`   | `Task []`  | Array with all **active** tasks in TaskManager.    |
 | `inactiveTasks` | `Task []`  | Array with all **inactive** tasks in TaskManager.  |
 
+OBS: TaskerMan is an instance of TaskManager.
+
 ---
 ### createTask()
-#### Create a Task on Task Manager.
-Example:
-```js
-  function MyCustomTask(){
-      console.log("I'm running!");
-  }
+Create a Task on Task Manager.
 
-  TaskerMan.createTask(MyCustomTask, 5);
+```js
+function MyCustomTask(){
+    console.log("I'm running!");
+}
+
+TaskerMan.createTask(MyCustomTask, 5);
 ```
 
 | Parameter   | Type       |Required| Description                        |
@@ -44,14 +71,14 @@ Example:
 
 Example:
 ```js
-  function MyCustomTask(){
-      console.log("I'm running!");
-  }
+function MyCustomTask(){
+    console.log("I'm running!");
+}
 
-  TaskerMan.createTask( MyCustomTask, 5, {
-      name: "ExampleTask",
-      repeat: true
-  } );
+TaskerMan.createTask( MyCustomTask, 5, {
+    name: "ExampleTask",
+    repeat: true
+});
 ```
 #### - logs -
 
@@ -66,7 +93,7 @@ Example:
 #### Delete a Task from Task Manager.
 Example:
 ```js
-  TaskerMan.deleteTask( 0 );
+TaskerMan.deleteTask( 0 );
 ```
 
 | Parameter   | Type       | Required | Description               |
@@ -88,9 +115,9 @@ Example:
 #### Get Task ID on Task Manager using it name.
 Example:
 ```js
-  const TaskID = TaskerMan.getTaskId("ExampleTask");
+const TaskID = TaskerMan.getTaskId("ExampleTask");
 
-  TaskerMan.deleteTask(TaskID);
+TaskerMan.deleteTask(TaskID);
 ```
 
 | Parameter   | Type       | Required | Description                  |
@@ -102,9 +129,9 @@ Example:
 #### Start a Task on Task Manager.
 Example:
 ```js
-  const TaskID = TaskerMan.getTaskId("ExampleTask");
+const TaskID = TaskerMan.getTaskId("ExampleTask");
 
-  TaskerMan.startTask( TaskID );
+TaskerMan.startTask( TaskID );
 ```
 
 | Parameter   | Type       | Required | Description               |
@@ -125,9 +152,9 @@ Example:
 #### Stop a Task on Task Manager.
 Example:
 ```js
-  const TaskID = TaskerMan.getTaskId("ExampleTask");
+const TaskID = TaskerMan.getTaskId("ExampleTask");
 
-  TaskerMan.stopTask( TaskID );
+TaskerMan.stopTask( TaskID );
 ```
 
 | Parameter   | Type       | Required | Description                                 |
