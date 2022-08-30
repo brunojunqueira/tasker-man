@@ -25,7 +25,7 @@ class Task {
     this.time = time * 1000;
     this.isActive = false;
 
-    prompt(`[ SUCCESS ] - #${this.id} ${this.name} has been created!`);
+    console.log(`[ SUCCESS ] - #${this.id} ${this.name} has been created!`);
   }
   /**
    * @brief Start the task.
@@ -34,7 +34,7 @@ class Task {
    */
   start() {
     if (this.isActive) {
-      prompt(`[ ERROR ] - #${this.id} ${this.name} is already active`);
+      console.log(`[ ERROR ] - #${this.id} ${this.name} is already active`);
       return;
     }
     if (this.repeat) {
@@ -42,7 +42,7 @@ class Task {
         try {
           this.callback();
         } catch (e) {
-          prompt(`[ ERROR ] - #${this.id} ${this.name} callback presented the follow error: ${e}`);
+          console.log(`[ ERROR ] - #${this.id} ${this.name} callback presented the follow error: ${e}`);
         }
       }, this.time);
     } else {
@@ -50,12 +50,12 @@ class Task {
         try {
           this.callback();
         } catch (e) {
-          prompt(`[ ERROR ] - #${this.id} ${this.name} callback presented the follow error: ${e}`);
+          console.log(`[ ERROR ] - #${this.id} ${this.name} callback presented the follow error: ${e}`);
         }
       }, this.time);
     }
     this.isActive = true;
-    prompt(`[ SUCCESS ] - #${this.id} ${this.name} started`);
+    console.log(`[ SUCCESS ] - #${this.id} ${this.name} started`);
   }
   /**
    * @brief Stop the task.
@@ -64,7 +64,7 @@ class Task {
    */
   stop() {
     if (!this.isActive) {
-      prompt(`[ ERROR ] - #${this.id} ${this.name} is not active`);
+      console.log(`[ ERROR ] - #${this.id} ${this.name} is not active`);
       return;
     }
     if (this.repeat) {
@@ -73,7 +73,7 @@ class Task {
       clearTimeout(this.timeout);
     }
     this.isActive = false;
-    prompt(`[ SUCCESS ] - #${this.id} ${this.name} stopped`);
+    console.log(`[ SUCCESS ] - #${this.id} ${this.name} stopped`);
   }
   /**
    * @brief Run task once.
@@ -83,7 +83,7 @@ class Task {
     try {
       this.callback();
     } catch (e) {
-      prompt(`[ ERROR ] - #${this.id} ${this.name} callback presented the follow error: ${e}`);
+      console.log(`[ ERROR ] - #${this.id} ${this.name} callback presented the follow error: ${e}`);
     }
   }
 }

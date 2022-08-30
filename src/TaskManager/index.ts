@@ -58,13 +58,13 @@ class TaskManager {
    */
   createTask(callback: () => any, timeout: number, options?: TaskOptions) {
     if ((timeout < 1 && timeout > 0) || timeout < 0) {
-      prompt(
+      console.log(
         "[ ERROR ] - To avoid issues, timeout cannot be lesser than 1s or negative. If your looking for delay or fast repeated tasks, please use 'setTimeout()' or 'setInterval()'. Task NOT created!",
       );
       return;
     }
     if (!options?.name) {
-      prompt('[ ADVERTISE ] - We recommended to name Tasks for easily manipulation.');
+      console.log('[ ADVERTISE ] - We recommended to name Tasks for easily manipulation.');
     }
 
     this.tasks.push(new Task(this.tasks.length, callback, timeout, options));
@@ -78,7 +78,7 @@ class TaskManager {
    */
   startTask(id: number) {
     if (!this.tasks[id]) {
-      prompt('[ ERROR ] - This Task doesnt exists');
+      console.log('[ ERROR ] - This Task doesnt exists');
       return;
     }
     this.tasks[id].start();
@@ -94,7 +94,7 @@ class TaskManager {
    */
   stopTask(id: number) {
     if (!this.tasks[id]) {
-      prompt('[ ERROR ] - This Task does not exists!');
+      console.log('[ ERROR ] - This Task does not exists!');
       return;
     }
 
@@ -112,15 +112,15 @@ class TaskManager {
    */
   deleteTask(id: number) {
     if (!this.tasks[id]) {
-      prompt('[ ERROR ] - This Task does not exists!');
+      console.log('[ ERROR ] - This Task does not exists!');
       return;
     }
     if (this.tasks[id].isActive) {
-      prompt('[ ERROR ] - This Task is active! Please, stop Task before delete!');
+      console.log('[ ERROR ] - This Task is active! Please, stop Task before delete!');
       return;
     }
     this.tasks = this.removeTask(this.tasks, id);
-    prompt(`[ SUCCESS ] - Task ${id} has been deleted!`);
+    console.log(`[ SUCCESS ] - Task ${id} has been deleted!`);
   }
 }
 
