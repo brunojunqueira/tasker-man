@@ -7,5 +7,5 @@
     "strict": true
   },
   "include": ["src", "lib/index.js", "lib/index.d.ts"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "**/__tests__/*"]
 }
