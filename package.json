@@ -1,6 +1,6 @@
 {
   "name": "tasker-man",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "A simple task manager application",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -11,11 +11,7 @@
     "build": "tsc",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
     "lint": "tslint -p tsconfig.json",
-    "test": "jest --config jestconfig.json",
-    "prepare": "yarn build",
-    "prepublishOnly": "yarn test && yarn lint",
-    "version": "yarn format && git add -A src",
-    "postversion": "git push && git push --tags"
+    "test": "jest --config jestconfig.json"
   },
   "repository": {
     "type": "git",
