@@ -1,13 +1,31 @@
 {
   "name": "tasker-man",
   "version": "1.1.0",
-  "description": "A tasks management application",
-  "main": "index.ts",
-  "author": "Bruno Junqueira",
-  "license": "MIT",
-  "devDependencies": {
-    "@types/node": "^18.7.13",
-    "typescript": "^4.8.2"
+  "description": "A simple task manager application",
+  "main": "index.js",
+  "files": ["lib/**/*"],
+  "scripts": {
+    "build": "tsc",
+    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
+    "lint": "tslint -p tsconfig.json"
   },
-  "type": "module"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brunojunqueira/tasker-man.git"
+  },
+  "author": "Bruno Junqueira",
+  "license": "ISC",
+  "keywords": [
+    "task",
+    "manager",
+    "sheduler",
+    "schedule"
+  ],
+  "homepage": "https://github.com/brunojunqueira/tasker-man#readme",
+  "devDependencies": {
+    "prettier": "^2.7.1",
+    "tslint": "^6.1.3",
+    "tslint-config-prettier": "^1.18.0",
+    "typescript": "^2.8.3"
+  }
 }
