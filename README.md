@@ -33,7 +33,7 @@ import TaskerMan from "tasker-man";
 ```
 #### require
 ```js
-const { default: TaskerMan } require("tasker-man");
+const { default: TaskerMan } = require("tasker-man");
 ```
 
 ## Documentation
