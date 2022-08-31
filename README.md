@@ -57,9 +57,9 @@ const activeTasks = TaskerMan.activeTasks();
 ```
 #### - returns -
 
-| Type                | Status     | Description    |
-| :------------------ | :--------- | :------------- |
-| `Task []`           | `SUCCESS`  | Active Tasks.  |
+| Type                    | Status     | Description    |
+| :---------------------- | :--------- | :------------- |
+| `["#{id} {name}", ...]` | `SUCCESS`  | Active Tasks.  |
 
 ---
 ### inactiveTasks()
@@ -70,9 +70,9 @@ const inactiveTasks = TaskerMan.inactiveTasks();
 ```
 #### - returns -
 
-| Type                | Status     | Description     |
-| :------------------ | :--------- | :-------------- |
-| `Task []`           | `SUCCESS`  | Inactive Tasks. |
+| Type                    | Status     | Description      |
+| :---------------------- | :--------- | :--------------- |
+| `["#{id} {name}", ...]` | `SUCCESS`  | Inactive Tasks.  |
 
 
 ---
