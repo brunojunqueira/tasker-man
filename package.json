@@ -18,7 +18,7 @@
     "url": "git+https://github.com/brunojunqueira/tasker-man.git"
   },
   "author": "Bruno Junqueira",
-  "license": "ISC",
+  "license": "MIT",
   "keywords": [
     "task",
     "manager",

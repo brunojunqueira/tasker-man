@@ -1,8 +1,9 @@
 import { Task, TaskOptions } from '../Task';
 
-enum TaskerManagerError{
-  badRequest = 400,
-  notFound = 404
+enum TaskerManagerStatus{
+  SUCCESS = 200,
+  BAD_REQUEST = 400,
+  NOT_FOUND = 404
 }
 
 class TaskManager {
@@ -56,7 +57,7 @@ class TaskManager {
       console.log(
         "[ ERROR ] - To avoid issues, timeout cannot be lesser than 1s or negative. If your looking for delay or fast repeated tasks, please use 'setTimeout()' or 'setInterval()'. Task NOT created!",
       );
-      return TaskerManagerError.badRequest;
+      return TaskerManagerStatus.BAD_REQUEST;
     }
     if (!(options && options.name)) {
       console.log('[ ADVERTISE ] - We recommended to name Tasks for easily manipulation.');
@@ -78,9 +79,10 @@ class TaskManager {
   startTask(id: number) {
     if (!this.tasks[id]) {
       console.log('[ ERROR ] - ( Start Task ) This Task does not exists');
-      return;
+      return TaskerManagerStatus.NOT_FOUND;
     }
     this.tasks[id].start();
+    return TaskerManagerStatus.SUCCESS
   }
   /**
    * @brief Stop an active Task from current TaskManager.
@@ -92,9 +94,10 @@ class TaskManager {
   stopTask(id: number) {
     if (!this.tasks[id]) {
       console.log('[ ERROR ] - ( Stop ) This Task does not exists!');
-      return;
+      return TaskerManagerStatus.NOT_FOUND;
     }
     this.tasks[id].stop();
+    return TaskerManagerStatus.SUCCESS;
   }
 
   /**
@@ -107,14 +110,15 @@ class TaskManager {
   deleteTask(id: number) {
     if (!this.tasks[id]) {
       console.log('[ ERROR ] - This Task does not exists!');
-      return;
+      return TaskerManagerStatus.NOT_FOUND;
     }
     if (this.tasks[id].isActive) {
       console.log('[ ERROR ] - This Task is active! Please, stop Task before delete!');
-      return;
+      return TaskerManagerStatus.BAD_REQUEST;
     }
     this.tasks = this.removeTask(this.tasks, id);
     console.log(`[ SUCCESS ] - Task ${id} has been deleted!`);
+    return TaskerManagerStatus.SUCCESS;
   }
   /**
    * @brief Return all active Tasks of current TaskManager.
