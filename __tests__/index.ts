@@ -1,4 +1,4 @@
-import TaskerMan from '../lib/index';
+const { TaskerMan } = require('../lib/index')
 
 TaskerMan.createTask(()=>{console.log("I'm running")}, 2, {
     name: "ExampleTask",
