@@ -26,8 +26,14 @@ yarn add tasker-man
 ```
 
 ### Import
+
+#### import
 ```js
 import TaskerMan from "tasker-man";
+```
+#### require
+```js
+const { default: TaskerMan } require("tasker-man");
 ```
 
 ## Documentation
