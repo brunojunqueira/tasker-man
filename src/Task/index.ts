@@ -1,39 +1,51 @@
+
 interface TaskOptions {
-  name?: string;
-  repeat?: boolean;
+  name?: string
+  repeat?: boolean
+  times?: number
 }
 
 class Task {
-  name: string;
-  id: number;
-  isActive: boolean;
+  name: string
+  id: number
+  isActive: boolean
 
   readonly callback: () => any;
   readonly repeat: boolean = false;
-  readonly time: number;
+  readonly delay: number
+  readonly times: number
 
-  private interval: any;
-  private timeout: any;
+  private interval: any
+  private timeout: any
+  private timesRemaining: number
 
-  constructor(id: number, callback: () => any, time: number, options?: TaskOptions) {
+  constructor(id: number, callback: () => any, delay: number, options?: TaskOptions) {
 
     this.id = id;
     this.name = `Task ${id}`;
     this.repeat = false;
+    this.times = 0;
+    this.timesRemaining = 0;
 
     if(options){
       if(options.name)
         this.name = options.name;
-      if(options.repeat)
-        this.repeat = false;
+      if(options.repeat){
+        this.repeat = options.repeat;
+        if(options.times){
+          this.times = options.times;
+          this.timesRemaining = options.times;
+        }
+      }
     } 
     
     this.callback = callback;
-    this.time = time * 1000;
+    this.delay = delay * 1000;
     this.isActive = false;
 
     console.log(`[ SUCCESS ] - #${this.id} ${this.name} has been created!`);
   }
+
   /**
    * @brief Start the task.
    * @log [ SUCCESS ] Informe task has been started.
@@ -45,13 +57,30 @@ class Task {
       return;
     }
     if (this.repeat) {
-      this.interval = setInterval(() => {
-        try {
-          this.callback();
-        } catch (e) {
-          console.log(`[ ERROR ] - #${this.id} ${this.name} callback presented the follow error: ${e}`);
-        }
-      }, this.time);
+
+      if(this.times){
+        this.interval = setInterval(() => {
+          try {
+            this.callback();
+          } catch (e) {
+            console.log(`[ ERROR ] - #${this.id} ${this.name} callback presented the follow error: ${e}`);
+          }
+          this.timesRemaining--;
+          if(!this.timesRemaining){
+            this.stop();
+            this.timesRemaining = this.times;
+          }
+        }, this.delay);
+      } else {
+        this.interval = setInterval(() => {
+          try {
+            this.callback();
+          } catch (e) {
+            console.log(`[ ERROR ] - #${this.id} ${this.name} callback presented the follow error: ${e}`);
+          }
+        }, this.delay);
+      }
+
     } else {
       this.timeout = setTimeout(() => {
         try {
@@ -59,7 +88,7 @@ class Task {
         } catch (e) {
           console.log(`[ ERROR ] - #${this.id} ${this.name} callback presented the follow error: ${e}`);
         }
-      }, this.time);
+      }, this.delay);
     }
     this.isActive = true;
     console.log(`[ SUCCESS ] - #${this.id} ${this.name} started`);

@@ -1,8 +1,8 @@
 import { Task } from '../Task/index.js';
 
 interface RoutineOptions {
-  order: number[];
-  repeat: boolean;
+  repeat?: boolean;
+  delay?: number
 }
 
 class Routine {
@@ -11,6 +11,7 @@ class Routine {
   constructor(tasks: Task[], options?: RoutineOptions) {
     this.tasks = tasks;
   }
+
 }
 
-export { Routine };
+export { Routine, RoutineOptions };
