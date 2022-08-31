@@ -5,7 +5,11 @@
     "declaration": true,
     "outDir": "./lib",
     "strict": true,
-    "types": []
+    "types": [],
+    "lib": [ 
+      "es2015",
+      "DOM"
+    ]
   },
   "include": ["src"],
   "exclude": ["node_modules", "**/__tests__/*"]

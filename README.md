@@ -1,4 +1,3 @@
-
 # Tasker Man(ager)
 
 [![NPM version](http://img.shields.io/npm/v/tasker-man.svg)](https://www.npmjs.com/package/tasker-man)
@@ -59,7 +58,7 @@ const activeTasks = TaskerMan.activeTasks();
 
 | Type                    | Status     | Description    |
 | :---------------------- | :--------- | :------------- |
-| `["#{id} {name}", ...]` | `SUCCESS`  | Active Tasks.  |
+| `string []`             | `SUCCESS`  | Active Tasks.  |
 
 ---
 ### inactiveTasks()
@@ -72,7 +71,7 @@ const inactiveTasks = TaskerMan.inactiveTasks();
 
 | Type                    | Status     | Description      |
 | :---------------------- | :--------- | :--------------- |
-| `["#{id} {name}", ...]` | `SUCCESS`  | Inactive Tasks.  |
+| `string []`             | `SUCCESS`  | Inactive Tasks.  |
 
 
 ---

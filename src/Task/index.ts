@@ -8,24 +8,22 @@ interface TaskOptions {
 class Task {
   name: string
   id: number
-  isActive: boolean
+  isActive: boolean = false
 
-  readonly callback: () => any;
-  readonly repeat: boolean = false;
+  readonly callback: () => any
+  readonly repeat: boolean = false
+  readonly times: number = 0
   readonly delay: number
-  readonly times: number
+  
 
   private interval: any
   private timeout: any
-  private timesRemaining: number
+  private timesRemaining: number = 0;
 
   constructor(id: number, callback: () => any, delay: number, options?: TaskOptions) {
 
     this.id = id;
     this.name = `Task ${id}`;
-    this.repeat = false;
-    this.times = 0;
-    this.timesRemaining = 0;
 
     if(options){
       if(options.name)
@@ -41,9 +39,8 @@ class Task {
     
     this.callback = callback;
     this.delay = delay * 1000;
-    this.isActive = false;
 
-    console.log(`[ SUCCESS ] - #${this.id} ${this.name} has been created!`);
+    console.log(`[ SUCCESS ] - Task #${this.id} ${this.name} has been created!`);
   }
 
   /**
@@ -53,17 +50,16 @@ class Task {
    */
   start() {
     if (this.isActive) {
-      console.log(`[ ERROR ] - #${this.id} ${this.name} is already active`);
+      console.log(`[ ERROR ] - Task #${this.id} ${this.name} is already active`);
       return;
     }
     if (this.repeat) {
-
       if(this.times){
         this.interval = setInterval(() => {
           try {
             this.callback();
           } catch (e) {
-            console.log(`[ ERROR ] - #${this.id} ${this.name} callback presented the follow error: ${e}`);
+            console.log(`[ ERROR ] - Task #${this.id} ${this.name} callback presented the follow error: ${e}`);
           }
           this.timesRemaining--;
           if(!this.timesRemaining){
@@ -76,7 +72,7 @@ class Task {
           try {
             this.callback();
           } catch (e) {
-            console.log(`[ ERROR ] - #${this.id} ${this.name} callback presented the follow error: ${e}`);
+            console.log(`[ ERROR ] - Task #${this.id} ${this.name} callback presented the follow error: ${e}`);
           }
         }, this.delay);
       }
@@ -86,12 +82,12 @@ class Task {
         try {
           this.callback();
         } catch (e) {
-          console.log(`[ ERROR ] - #${this.id} ${this.name} callback presented the follow error: ${e}`);
+          console.log(`[ ERROR ] - Task #${this.id} ${this.name} callback presented the follow error: ${e}`);
         }
       }, this.delay);
     }
     this.isActive = true;
-    console.log(`[ SUCCESS ] - #${this.id} ${this.name} started`);
+    console.log(`[ SUCCESS ] - Task #${this.id} ${this.name} started`);
   }
   /**
    * @brief Stop the task.
@@ -100,7 +96,7 @@ class Task {
    */
   stop() {
     if (!this.isActive) {
-      console.log(`[ ERROR ] - #${this.id} ${this.name} is not active`);
+      console.log(`[ ERROR ] - Task #${this.id} ${this.name} is not active`);
       return;
     }
     if (this.repeat) {
@@ -109,7 +105,7 @@ class Task {
       clearTimeout(this.timeout);
     }
     this.isActive = false;
-    console.log(`[ SUCCESS ] - #${this.id} ${this.name} stopped`);
+    console.log(`[ SUCCESS ] - Task #${this.id} ${this.name} stopped`);
   }
   /**
    * @brief Run task once.
@@ -119,7 +115,7 @@ class Task {
     try {
       this.callback();
     } catch (e) {
-      console.log(`[ ERROR ] - #${this.id} ${this.name} callback presented the follow error: ${e}`);
+      console.log(`[ ERROR ] - Task #${this.id} ${this.name} callback presented the follow error: ${e}`);
     }
   }
 }
