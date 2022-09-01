@@ -8,9 +8,7 @@
 
 A simple task manager.
 
-## Usage
-
-### Installation
+## Installation
 
 You can install using [npm](https://www.npmjs.com/package/tasker-man) or [yarn](https://yarnpkg.com/package/tasker-man).
 
@@ -24,9 +22,9 @@ npm install tasker-man
 yarn add tasker-man
 ```
 
-### Import
+## Usage
 
-#### module
+#### import
 ```js
 import { TaskerMan } from "tasker-man";
 ```
