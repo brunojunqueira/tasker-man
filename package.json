@@ -1,6 +1,6 @@
 {
   "name": "tasker-man",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "A simple task manager application",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
