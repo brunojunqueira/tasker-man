@@ -17,6 +17,8 @@ class Routine {
   readonly times: number = 0
   readonly delay: number = 0
 
+  private counter: number = 1
+
   constructor(id: number, tasks: Task[], options?: RoutineOptions) {
     this.tasks = tasks;
     this.id = id;
@@ -27,17 +29,18 @@ class Routine {
         this.name = options.name;
       if(options.delay && options.delay > 0)
         this.delay = options.delay * 1000;
-      if(options.repeat && options.times){
+      if(options.repeat){
         this.repeat = options.repeat;
-        this.times = options.times;
+        if(options.times)
+          this.times = options.times;
       }
     } 
     console.log(`[ SUCCESS ] - Routine #${this.id} ${this.name} has been created!`);
   }
 
   private nextStart(id: number){
-    if(this.tasks[id + 1])
-      this.start(id + 1);
+    if(this.tasks[id])
+      this.start(id);
   }
 
   start(id: number = 0){
@@ -45,10 +48,41 @@ class Routine {
       console.log(`[ ERROR ] - Routine #${this.id} ${this.name} is already active`);
       return ;
     }
-    this.tasks[id].onDevTaskStop = () => { 
-      this.isActive = false; 
-      this.nextStart(id);
-    };
+    if(id+1 === this.tasks.length){
+      if(this.repeat){
+        if(this.counter < this.times){
+            this.tasks[id].onDevTaskStop = () => { 
+            this.isActive = false;
+            let timeout = setTimeout(()=>{
+              this.nextStart(0);
+              clearTimeout(timeout);
+            }, this.delay)
+            this.counter++;
+          };
+        } else if (this.times === 0) {
+          this.tasks[id].onDevTaskStop = () => { 
+            this.isActive = false;
+            let timeout = setTimeout(()=>{
+              this.nextStart(0);
+              clearTimeout(timeout);
+            }, this.delay);
+          } 
+        } else {
+          this.tasks[id].onDevTaskStop = () => { 
+            this.isActive = false;
+            this.tasks[id].onDevTaskStop = ()=>{}; 
+          };
+          this.counter = 0;
+        }
+      } 
+    } else {
+      this.tasks[id].onDevTaskStop = () => { 
+        this.isActive = false;
+        this.tasks[id].onDevTaskStop = ()=>{}; 
+        this.nextStart(id+1);
+      };
+    }
+    
     this.tasks[id].start();
     this.isActive = true;
   }

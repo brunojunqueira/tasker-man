@@ -26,7 +26,7 @@ yarn add tasker-man
 
 ### Import
 
-#### import
+#### module
 ```js
 import { TaskerMan } from "tasker-man";
 ```
@@ -35,19 +35,22 @@ import { TaskerMan } from "tasker-man";
 const { TaskerMan } = require("tasker-man");
 ```
 
-## Documentation
+# Documentation
 
-### TaskManager
+## TaskManager
 Main class of application that contains all functions and integrations needed to create, run, stop and delete Tasks.
 
 
 | Proprieties     | Type       | Description                                        |
 | :-------------- | :--------- | :------------------------------------------------- |
-| `tasks`         | `Task []`  | Array with all tasks created in TaskManager.       |
+| `tasks`         | `Task []`  | Array with all Tasks created in TaskManager.       |
+| `routines`      | `Routine []`  | Array with all Routines created in TaskManager.       |
 
 OBS: TaskerMan is an instance of TaskManager.
 
----
+## Tasks
+A Task is a object that execute a callback in selected time, with some options like delay, and repeats.
+
 ### activeTasks()
 Return all **active** Tasks of Task Manager.
 
@@ -151,7 +154,7 @@ TaskerMan.deleteTask( 0 );
 
 | Type                | Status     | Description              |
 | :------------------ | :--------- | :------------------------|
-| `null`              | `SUCCESS`  | Return null.             |
+| `TaskManagerStatus` | `SUCCESS`  | Return SUCCESS.          |
 | `TaskManagerStatus` | `ERROR`    | Return NOT_FOUND.        |
 | `TaskManagerStatus` | `ERROR`    | Return BAD_REQUEST.      |
 
@@ -171,9 +174,9 @@ TaskerMan.deleteTask(TaskID);
 
 #### - returns -
 
-| Type       | Status     | Description              |
-| :--------- | :--------- | :------------------------|
-| `number`   | `SUCCESS`  | Return Task created.     |
+| Type                | Status     | Description              |
+| :------------------ | :--------- | :------------------------|
+| `TaskManagerStatus` | `SUCCESS`  | Return SUCCESS.          |
 
 ---
 ### startTask()
@@ -198,9 +201,11 @@ TaskerMan.startTask( TaskID );
 | `ERROR`    | If Task does not exist.       |
 | `ERROR`    | If Task is already active.    |
 
+#### - returns -
+
 | Type                | Status     | Description              |
 | :------------------ | :--------- | :------------------------|
-| `null`              | `SUCCESS`  | Return null.             |
+| `TaskManagerStatus` | `SUCCESS`  | Return SUCCESS.          |
 | `TaskManagerStatus` | `ERROR`    | Return NOT_FOUND.        |
 | `TaskManagerStatus` | `ERROR`    | Return BAD_REQUEST.      |
 
@@ -227,8 +232,40 @@ TaskerMan.stopTask( TaskID );
 | `ERROR`    | If Task does not exist.       |
 | `ERROR`    | If Task is not active.        |
 
+#### - returns -
+
 | Type                | Status     | Description              |
 | :------------------ | :--------- | :------------------------|
-| `null`              | `SUCCESS`  | Return null.             |
+| `TaskManagerStatus` | `SUCCESS`  | Return SUCCESS.          |
 | `TaskManagerStatus` | `ERROR`    | Return NOT_FOUND.        |
 | `TaskManagerStatus` | `ERROR`    | Return BAD_REQUEST.      |
+
+
+## Routines
+Routine is a collection of tasks that can be executed in order and can be repeated.
+
+---
+### activeRoutines()
+Return all **active** Routines of Task Manager.
+
+```js
+const activeRoutines = TaskerMan.activeRoutines();
+```
+#### - returns -
+
+| Type                    | Status     | Description    |
+| :---------------------- | :--------- | :------------- |
+| `string []`             | `SUCCESS`  | Active Routines.  |
+
+---
+### inactiveRoutines()
+Return all **inactive** Routines of Task Manager.
+
+```js
+const inactiveRoutines = TaskerMan.inactiveRoutines();
+```
+#### - returns -
+
+| Type                    | Status     | Description         |
+| :---------------------- | :--------- | :------------------ |
+| `string []`             | `SUCCESS`  | Inactive Routines.  |
