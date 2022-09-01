@@ -50,7 +50,7 @@ class TaskManager {
    * @param options [ TaskOptions ] - Task options.
    * @log [ SUCCESS ] - Inform Task had been created.
    * @log [ ERROR ] - If timeout be lesser than 1s and not equal 0.
-   * @log [ ADVERTISE ] - If Task is already active.
+   * @log [ WARNING ] - If Task does not have a name
    */
   createTask(callback: () => any, delay: number, options?: TaskOptions) {
     if ((delay < 1 && delay > 0) || delay < 0) {
@@ -60,7 +60,7 @@ class TaskManager {
       return TaskerManagerStatus.BAD_REQUEST;
     }
     if (!(options && options.name)) {
-      console.log('[ ADVERTISE ] - We recommended to name Tasks for easily manipulation.');
+      console.log('[ WARNING ] - We recommended to name Tasks for easily manipulation.');
     }
 
     const newTask = new Task(this.tasks.length, callback, delay, options);
@@ -160,11 +160,19 @@ class TaskManager {
     });
     return id;
   }
+  /**
+   * @brief Create a new Task to current TaskManager.
+   * @param tasksIDs [ function ] Function that will be executed by task.
+   * @param options [ TaskOptions ] - Task options.
+   * @log [ SUCCESS ] - Inform Task had been created.
+   * @log [ ERROR ] - If timeout be lesser than 1s and not equal 0.
+   * @log [ WARNING ] - If Task does not have a name
+   */
   createRoutine(tasksIDs : number [], options? : RoutineOptions){
     let tasks : Task [] = [];
     let error = { status: TaskerManagerStatus.SUCCESS, taskID: -1 };
     if (!(options && options.name)) {
-      console.log('[ ADVERTISE ] - We recommended to name Routines for easily manipulation.');
+      console.log('[ WARNING ] - We recommended to name Routines for easily manipulation.');
     }
     tasksIDs.forEach((taskID)=>{
       if(this.tasks[taskID]){

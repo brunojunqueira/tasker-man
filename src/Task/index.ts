@@ -3,6 +3,14 @@ interface TaskOptions {
   name?: string
   repeat?: boolean
   times?: number
+  onTaskStart?: () => void
+  onTaskStop?: () => void
+}
+
+enum TaskStatus{
+  STARTED = 10,
+  STOPPED = 20,
+  INVALID = 40
 }
 
 class Task {
@@ -10,12 +18,17 @@ class Task {
   id: number
   isActive: boolean = false
 
+  onDevTaskStart: () => void = () => {}
+  onDevTaskStop: () => void = () => {}
+  
+  readonly onTaskStart: () => void = () => {}
+  readonly onTaskStop: () => void = () => {}
+
   readonly callback: () => any
   readonly repeat: boolean = false
   readonly times: number = 0
   readonly delay: number
   
-
   private interval: any
   private timeout: any
   private timesRemaining: number = 0;
@@ -35,6 +48,10 @@ class Task {
           this.timesRemaining = options.times;
         }
       }
+      if(options.onTaskStart)
+        this.onTaskStart = options.onTaskStart;
+      if(options.onTaskStop)
+        this.onTaskStop = options.onTaskStop;
     } 
     
     this.callback = callback;
@@ -51,15 +68,17 @@ class Task {
   start() {
     if (this.isActive) {
       console.log(`[ ERROR ] - Task #${this.id} ${this.name} is already active`);
-      return;
+      return TaskStatus.INVALID;
     }
+    this.onTaskStart();
+    this.onDevTaskStart();
     if (this.repeat) {
       if(this.times){
         this.interval = setInterval(() => {
           try {
             this.callback();
           } catch (e) {
-            console.log(`[ ERROR ] - Task #${this.id} ${this.name} callback presented the follow error: ${e}`);
+            console.log(`[ ERROR ] - Task #${this.id} ${this.name} callback presented the followed error: ${e}`);
           }
           this.timesRemaining--;
           if(!this.timesRemaining){
@@ -84,10 +103,12 @@ class Task {
         } catch (e) {
           console.log(`[ ERROR ] - Task #${this.id} ${this.name} callback presented the follow error: ${e}`);
         }
+        this.stop();
       }, this.delay);
     }
     this.isActive = true;
     console.log(`[ SUCCESS ] - Task #${this.id} ${this.name} started`);
+    return TaskStatus.STARTED;
   }
   /**
    * @brief Stop the task.
@@ -97,8 +118,10 @@ class Task {
   stop() {
     if (!this.isActive) {
       console.log(`[ ERROR ] - Task #${this.id} ${this.name} is not active`);
-      return;
+      return TaskStatus.INVALID;
     }
+    this.onTaskStop();
+    this.onDevTaskStop();
     if (this.repeat) {
       clearInterval(this.interval);
     } else {
@@ -106,17 +129,7 @@ class Task {
     }
     this.isActive = false;
     console.log(`[ SUCCESS ] - Task #${this.id} ${this.name} stopped`);
-  }
-  /**
-   * @brief Run task once.
-   * @log [ SUCCESS ] Informe task had been executed.
-   */
-  run() {
-    try {
-      this.callback();
-    } catch (e) {
-      console.log(`[ ERROR ] - Task #${this.id} ${this.name} callback presented the follow error: ${e}`);
-    }
+    return TaskStatus.STOPPED;
   }
 }
 
