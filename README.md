@@ -6,7 +6,29 @@
 
 [![NPM](https://nodei.co/npm/tasker-man.png)](https://nodei.co/npm/tasker-man/)
 
-A simple task manager.
+A powerful and simple task manager.
+
+Note: The old methods of TaskerMan are deprecated and I strongly recommend to use the new one implementation.
+
+## Summary
+
+#### General
+- [Installation](#installation) 
+- [Usage](#usage)
+
+#### Documentation
+- [TaskManager](#taskmanager)
+	- [createTaskManager](#createTaskManager())
+	- [activeTasks](#activeTasks())
+  - [inactiveTasks](#inactiveTasks())
+  - [append](#append())
+  - [remove](#remove())
+  - [getIdsByName](#getIdsByName())
+  - [start](#start)
+  - [abort](#abort)
+- [Tasks](#tasks)
+	- [createTask](#createTask())
+- [DTR](#dtr)
 
 ## Installation
 
@@ -26,244 +48,195 @@ yarn add tasker-man
 
 #### import
 ```js
-import { TaskerMan } from "tasker-man";
-```
-#### require
-```js
-const { TaskerMan } = require("tasker-man");
+import { createTask, createTaskManager } from "tasker-man";
 ```
 
 # Documentation
 
 ## TaskManager
-Main class of application that contains all functions and integrations needed to create, run, stop and delete Tasks.
+Main class of application that contains all functions and integrations needed to append, run, stop and pop Tasks.
 
+OBS: TaskerMan is an instance of TaskManager. ##deprecated##
 
-| Proprieties     | Type       | Description                                        |
-| :-------------- | :--------- | :------------------------------------------------- |
-| `tasks`         | `Task []`  | Array with all Tasks created in TaskManager.       |
-| `routines`      | `Routine []`  | Array with all Routines created in TaskManager.       |
+### createTaskManager()
+Create a new instance of TaskManager.
 
-OBS: TaskerMan is an instance of TaskManager.
-
-## Tasks
-A Task is a object that execute a callback in selected time, with some options like delay, and repeats.
+```js
+...
+const manager = createTaskManager(task1, task2, task3);
+```
 
 ### activeTasks()
 Return all **active** Tasks of Task Manager.
 
 ```js
-const activeTasks = TaskerMan.activeTasks();
+const manager = createTaskManager();
+const activeTasks = manager.activeTasks();
 ```
+
 #### - returns -
 
-| Type                    | Status     | Description    |
-| :---------------------- | :--------- | :------------- |
-| `string []`             | `SUCCESS`  | Active Tasks.  |
+| Type                    |  Description    |
+| :---------------------- |  :------------- |
+| `Task []`               |  Active Tasks.  |
+
 
 ---
 ### inactiveTasks()
 Return all **inactive** Tasks of Task Manager.
 
 ```js
-const inactiveTasks = TaskerMan.inactiveTasks();
+const tasksID = manager.getIdsByName("ExampleTask");
+manager.remove(TasksID[0]);
 ```
 #### - returns -
 
-| Type                    | Status     | Description      |
-| :---------------------- | :--------- | :--------------- |
-| `string []`             | `SUCCESS`  | Inactive Tasks.  |
+| Type                    |  Description      |
+| :---------------------- |  :--------------- |
+| `Task []`               |  Inactive Tasks.  |
 
-
----
-### createTask()
-Create a Task on Task Manager.
+### append()
+Push a task on TaskManager. Example:
 
 ```js
-function MyCustomTask(){
-    console.log("I'm running!");
-}
+...
+const manager = createTaskManager();
 
-TaskerMan.createTask(MyCustomTask, 5);
+const task = createTask(taskCallback, taskOptions);
+manager.append(task);
 ```
 
-| Parameter   | Type       |Required| Description                        |
-| :---------- | :--------- |:------ |:---------------------------------- |
-| `callback`  | `function` | Yes    | Function will be executed by task. |
-| `timeout`   | `number`   | Yes    | Delay Timeout in **seconds**. If 0 Task will run instantly and **cannot** repeat |
-| `options`   | `object`   | No     | Task options                       |
-
-#### - options -
-
-| Parameter   | Type       | Description                                                    |
-| :---------- | :--------- | :------------------------------------------------------------- |
-| `name`      | `string`   | **Recommended**. Name used to identify a Task on Task Manager. |
-| `repeat`    | `boolean`  | Inform if Task will keep executing callback continually.       |
-
-Example:
-```js
-function MyCustomTask(){
-    console.log("I'm running!");
-}
-
-TaskerMan.createTask( MyCustomTask, 5, {
-    name: "ExampleTask",
-    repeat: true
-});
-```
-#### - logs -
-
-| Status     | Description                                                    |
-| :--------- | :------------------------------------------------------------- |
-| `SUCCESS`  | Inform Task had been created.                                  |
-| `ERROR`    | If timeout be lesser than 1s and not equal 0.                  |
-| `ADVERTISE`| If Task does not received a name.                              |
-
-#### - returns -
-
-| Type                | Status     | Description              |
-| :------------------ | :--------- | :------------------------|
-| `Task`              | `SUCCESS`  | Return Task created.     |
-| `TaskManagerStatus` | `ERROR`    | Return BAD_REQUEST.      |
+| Parameter   | Type       | Required | Description               |
+| :---------- | :--------- | :------- | :------------------------ |
+| `task`        | `Task`   | Yes      | A Task Instance.          |
 
 ---
-### deleteTask()
-#### Delete a Task from Task Manager.
+### remove()
+Delete a Task from Task Manager.
 Example:
 ```js
-TaskerMan.deleteTask( 0 );
+...
+manager.remove(0);
 ```
 
 | Parameter   | Type       | Required | Description               |
 | :---------- | :--------- | :------- | :------------------------ |
 | `id`        | `number`   | Yes      | Task ID on Task Manager.  |
 
-**OBS: Task ID Can be got by using 'getTaskId( )' function!**
-
-#### - logs -
-
-| Type       | Description                   |
-| :--------- | :---------------------------- |
-| `SUCCESS`  | Inform Task had been deleted. |
-| `ERROR`    | If Task does not exist.       |
-| `ERROR`    | If Task is active.            |
-
-#### - returns -
-
-| Type                | Status     | Description              |
-| :------------------ | :--------- | :------------------------|
-| `TaskManagerStatus` | `SUCCESS`  | Return SUCCESS.          |
-| `TaskManagerStatus` | `ERROR`    | Return NOT_FOUND.        |
-| `TaskManagerStatus` | `ERROR`    | Return BAD_REQUEST.      |
+**OBS: Task ID Can be got by using 'getIdsByName( )' method!**
 
 ---
-### getTaskId()
-#### Get Task ID on Task Manager using it name.
+### getIdsByName()
+Get Tasks IDs on Task Manager using a given name.
 Example:
 ```js
-const TaskID = TaskerMan.getTaskId("ExampleTask");
+const manager = createTaskManager(task1, task2, task3);
+const tasksID = manager.getIdsByName("ExampleTask");
 
-TaskerMan.deleteTask(TaskID);
+manager.remove(tasksID[0]);
 ```
 
 | Parameter   | Type       | Required | Description                  |
 | :---------- | :--------- | :------- | :--------------------------- |
 | `name`      | `string`   | Yes      | Task name on Task Manager.   |
 
-#### - returns -
-
-| Type                | Status     | Description              |
-| :------------------ | :--------- | :------------------------|
-| `TaskManagerStatus` | `SUCCESS`  | Return SUCCESS.          |
-
 ---
-### startTask()
-#### Start a Task on Task Manager.
+### start()
+Start a Task on Task Manager.
 Example:
 ```js
-const TaskID = TaskerMan.getTaskId("ExampleTask");
+...
+const tasksIDs = manager.getIDsByName("ExampleTask");
 
-TaskerMan.startTask( TaskID );
+manager.start(tasksIDs[0]);
 ```
 
 | Parameter   | Type       | Required | Description               |
 | :---------- | :--------- | :------- | :------------------------ |
 | `id`        | `number`   | Yes      | Task ID on Task Manager.  |
 
-**OBS: Task ID Can be got by using 'getTaskId( )' function!**
-#### - logs -
-
-| Type       | Description                   |
-| :--------- | :---------------------------- |
-| `SUCCESS`  | Inform Task had been started. |
-| `ERROR`    | If Task does not exist.       |
-| `ERROR`    | If Task is already active.    |
-
-#### - returns -
-
-| Type                | Status     | Description              |
-| :------------------ | :--------- | :------------------------|
-| `TaskManagerStatus` | `SUCCESS`  | Return SUCCESS.          |
-| `TaskManagerStatus` | `ERROR`    | Return NOT_FOUND.        |
-| `TaskManagerStatus` | `ERROR`    | Return BAD_REQUEST.      |
+**OBS: Task ID Can be got by using 'getIDsByName( )' method!**
 
 ---
-### stopTask()
-#### Stop a Task on Task Manager.
+### abort()
+Abort a Task from Task Manager.
 Example:
 ```js
-const TaskID = TaskerMan.getTaskId("ExampleTask");
+const tasksIDs = manager.getIDsByName("ExampleTask");
 
-TaskerMan.stopTask( TaskID );
+manager.abort(tasksIDs[0]);
 ```
 
-| Parameter   | Type       | Required | Description                                 |
-| :---------- | :--------- | :------- | :------------------------------------------ |
-| `id`        | `number`   | Yes      | Task ID on Task Manager.                    |
+| Parameter   | Type       | Required | Description              |
+| :---------- | :--------- | :------- | :----------------------- |
+| `id`        | `number`   | Yes      | Task ID on Task Manager. |
 
-**OBS: Task ID Can be got by using 'getTaskId( )' function!**
-#### - logs -
-
-| Type       | Description                   |
-| :--------- | :---------------------------- |
-| `SUCCESS`  | Inform Task had been stopped. |
-| `ERROR`    | If Task does not exist.       |
-| `ERROR`    | If Task is not active.        |
-
-#### - returns -
-
-| Type                | Status     | Description              |
-| :------------------ | :--------- | :------------------------|
-| `TaskManagerStatus` | `SUCCESS`  | Return SUCCESS.          |
-| `TaskManagerStatus` | `ERROR`    | Return NOT_FOUND.        |
-| `TaskManagerStatus` | `ERROR`    | Return BAD_REQUEST.      |
+**OBS: Task ID Can be got by using 'getIDsByName( )' method!**
 
 
-## Routines
-Routine is a collection of tasks that can be executed in order and can be repeated.
+## Tasks
+A Task is a object that execute a callback in selected time, with some parameters like delay and repeat.
 
----
-### activeRoutines()
-Return all **active** Routines of Task Manager.
+### createTask()
+Create a Task on Task Manager.
 
 ```js
-const activeRoutines = TaskerMan.activeRoutines();
+function taskCallback(){
+	console.log("Hello TaskerMan!");
+}
+const taskOptions = {
+	repeat: 'endlessly',
+	interval: '2s'
+}
+const task = createTask(taskCallback, taskOptions);
 ```
-#### - returns -
 
-| Type                    | Status     | Description    |
-| :---------------------- | :--------- | :------------- |
-| `string []`             | `SUCCESS`  | Active Routines.  |
+| Parameter   | Type       |Required| Description      |
+| :---------- | :--------- |:------ |:-----------------|
+| `callback`  | `function` | Yes    | Function will be executed by task. |
+| `taskOptions`   | `TaskOptions`   | No    | Object that contain Task parameters. |
+
+#### - TaskOptions -
+
+| Parameter   | Type       | Description                                                    |
+| :---------- | :--------- | :------------------------------------------------------------- |
+| `name`      | `string`   | **Recommended**. Name used to identify a Task on Task Manager. |
+| `repeat`    | `number` or `"endlessly"`  | Times task will repeat. If "endlessly", TaskManager will run the task forever. |
+| `delay`    | `number` or `string`  | Time task will take to run for the first time. Follow **SST Rule**. |
+| `interval`    | `number` or `string`  | Time task will take to repeat. Follow **SST Rule**. |
+
+
+## SST
+SST or *Simple Sequential Time* is a time set rule created to supply big time intervals in a simple and intuitive way.
+
+### Format
+
+DTR use a "-yy -mm -dd -h -m -s" format.
+
+| Symbol | Reference |
+|:-------|:----------|
+| yy     | Year      |
+| mm     | Month     |
+| dd     | Day       |
+| h      | Hour      |
+| m      | Minute    |
+| s      | Second    |
 
 ---
-### inactiveRoutines()
-Return all **inactive** Routines of Task Manager.
+### Usage
 
-```js
-const inactiveRoutines = TaskerMan.inactiveRoutines();
-```
-#### - returns -
+You can use DTR with any time you need, since you put the time symbols in order `year -> month -> day -> hour -> minute -> second`.
 
-| Type                    | Status     | Description         |
-| :---------------------- | :--------- | :------------------ |
-| `string []`             | `SUCCESS`  | Inactive Routines.  |
+Example:
+
+	1yy 2mm 5dd 3h 45m 10s
+
+This mean the time interval will be set to 1 year, 2 months, 5 days, 3 hours, 45 minutes and 10 seconds.
+
+You also can skip some symbol and will still work since you keep the order.
+
+Example:
+
+ 	3dd 30m
+
+This mean the time interval will be set to 3 days and 30 minutes.

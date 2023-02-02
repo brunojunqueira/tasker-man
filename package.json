@@ -1,6 +1,6 @@
 {
   "name": "tasker-man",
-  "version": "1.2.0",
+  "version": "2.0.0",
   "description": "A simple task manager application",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -8,8 +8,8 @@
     "lib/**/*"
   ],
   "scripts": {
-    "build": "tsc",
-    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
+    "build": "npm run format && npm run lint && tsc",
+    "format": "prettier --write \"src/**/*.ts\"",
     "lint": "tslint -p tsconfig.json",
     "test": "ts-node __tests__/index.ts"
   },

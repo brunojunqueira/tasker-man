@@ -1,22 +1,22 @@
 import { Task, TaskOptions } from '../Task';
 import { Routine, RoutineOptions } from '../Routine';
 
-enum TaskerManagerStatus{
+enum TaskerManagerStatus {
   SUCCESS = 200,
   BAD_REQUEST = 400,
-  NOT_FOUND = 404
+  NOT_FOUND = 404,
 }
 
 class TaskManager {
-  tasks: Task[] = []
-  routines: Routine [] = []
+  tasks: Task[] = [];
+  routines: Routine[] = [];
 
   /**
    * @brief Remove a Task from list.
    * @param id [optional/required] Task's ID on TaskManager. OBS: Can be got by using 'getTaskId( )' function!
    * @returns List with item removed.
    */
-   private removeFromList(list: any [], id: number) {
+  private removeFromList(list: any[], id: number) {
     const length = list.length;
     for (let i = id; i < length; i++) {
       if (i + 1 === length) {
@@ -30,7 +30,7 @@ class TaskManager {
     return list;
   }
 
-  /*---------------------------------------  TASK CODE  --------------------------------------------*/  
+  /*---------------------------------------  TASK CODE  --------------------------------------------*/
   /**
    *
    * @param name [ required ] - Task's NAME on TaskManager.
@@ -82,7 +82,7 @@ class TaskManager {
       return TaskerManagerStatus.NOT_FOUND;
     }
     this.tasks[id].start();
-    return TaskerManagerStatus.SUCCESS
+    return TaskerManagerStatus.SUCCESS;
   }
   /**
    * @brief Stop an active Task from current TaskManager.
@@ -123,11 +123,10 @@ class TaskManager {
    * @brief Return all active Tasks of current TaskManager.
    * @returns Active Tasks.
    */
-  activeTasks(){
-    let tasks : string [] = [];
-    this.tasks.forEach((task)=>{
-      if(task.isActive)
-        tasks.push(`#${task.id} ${task.name}`);
+  activeTasks() {
+    let tasks: string[] = [];
+    this.tasks.forEach((task) => {
+      if (task.isActive) tasks.push(`#${task.id} ${task.name}`);
     });
     return tasks;
   }
@@ -135,11 +134,10 @@ class TaskManager {
    * @brief Return all inaactive Tasks of current TaskManager.
    * @returns Inactive Tasks.
    */
-  inactiveTasks(){
-    let tasks : string [] = [];
-    this.tasks.forEach((task)=>{
-      if(!task.isActive)
-        tasks.push(`#${task.id} ${task.name}`);
+  inactiveTasks() {
+    let tasks: string[] = [];
+    this.tasks.forEach((task) => {
+      if (!task.isActive) tasks.push(`#${task.id} ${task.name}`);
     });
     return tasks;
   }
@@ -161,36 +159,39 @@ class TaskManager {
     return id;
   }
   /**
-   * @brief Create a new Task to current TaskManager.
+   * @deprecated Use createTask method instead.
+   * Create a new Task to current TaskManager.
    * @param tasksIDs [ function ] Function that will be executed by task.
    * @param options [ TaskOptions ] - Task options.
    * @log [ SUCCESS ] - Inform Task had been created.
    * @log [ ERROR ] - If timeout be lesser than 1s and not equal 0.
    * @log [ WARNING ] - If Task does not have a name
    */
-  createRoutine(tasksIDs : number [], options? : RoutineOptions){
-    let tasks : Task [] = [];
+  createRoutine(tasksIDs: number[], options?: RoutineOptions) {
+    let tasks: Task[] = [];
     let error = { status: TaskerManagerStatus.SUCCESS, taskID: -1 };
     if (!(options && options.name)) {
       console.log('[ WARNING ] - We recommended to name Routines for easily manipulation.');
     }
-    tasksIDs.forEach((taskID)=>{
-      if(this.tasks[taskID]){
-        if(this.tasks[taskID].repeat && !this.tasks[taskID].times){
+    tasksIDs.forEach((taskID) => {
+      if (this.tasks[taskID]) {
+        if (this.tasks[taskID].repeat && !this.tasks[taskID].times) {
           error.taskID = taskID;
           error.status = 400;
         }
         tasks.push(this.tasks[taskID]);
-      }else{
+      } else {
         error.taskID = taskID;
         error.status = 404;
       }
     });
-    if(error.status === 400){
-      console.log(`[ ERROR ] - ( Creating Routine ) Trying add Task #${error.taskID}. To avoid overload of same task, Tasks in Routines cannot run forever!`);
+    if (error.status === 400) {
+      console.log(
+        `[ ERROR ] - ( Creating Routine ) Trying add Task #${error.taskID}. To avoid overload of same task, Tasks in Routines cannot run forever!`,
+      );
       return error;
     }
-    if(error.status === 404){
+    if (error.status === 404) {
       console.log(`[ ERROR ] - ( Creating Routine ) Task #${error.taskID} does not exists!`);
       return error;
     }
@@ -205,13 +206,13 @@ class TaskManager {
    * @log [ ERROR ] - If Routine does not exist.
    * @log [ ERROR ] - If Routine is already active.
    */
-  startRoutine(id: number){
+  startRoutine(id: number) {
     if (!this.routines[id]) {
       console.log(`[ ERROR ] - ( Starting Routine ) Routine #${id} does not exists!`);
       return TaskerManagerStatus.NOT_FOUND;
     }
     this.routines[id].start();
-    return TaskerManagerStatus.SUCCESS
+    return TaskerManagerStatus.SUCCESS;
   }
   /**
    * @brief Stop an active Routine from current TaskManager.
@@ -220,13 +221,13 @@ class TaskManager {
    * @log [ ERROR ] - If Routine does not exist.
    * @log [ ERROR ] - If Routine is not active.
    */
-  stopRoutine(id: number){
+  stopRoutine(id: number) {
     if (!this.routines[id]) {
       console.log(`[ ERROR ] - ( Stopping Routine ) Routine #${id} does not exists!`);
       return TaskerManagerStatus.NOT_FOUND;
     }
     this.routines[id].stop();
-    return TaskerManagerStatus.SUCCESS
+    return TaskerManagerStatus.SUCCESS;
   }
   /**
    * @brief Delete a Routine from current TaskManager.
@@ -235,7 +236,7 @@ class TaskManager {
    * @log [ ERROR ] - If Routine does not exist.
    * @log [ ERROR ] - If Routine is active.
    */
-   deleteRoutine(id: number) {
+  deleteRoutine(id: number) {
     if (!this.routines[id]) {
       console.log(`[ ERROR ] - ( Deleting Routine ) Routine #${id} does not exists!`);
       return TaskerManagerStatus.NOT_FOUND;
@@ -252,11 +253,10 @@ class TaskManager {
    * @brief Return all active Routines of current TaskManager.
    * @returns Active Tasks.
    */
-   activeRoutines(){
-    let routines : string [] = [];
-    this.routines.forEach((routine)=>{
-      if(routine.isActive)
-      routines.push(`#${routine.id} ${routine.name}`);
+  activeRoutines() {
+    let routines: string[] = [];
+    this.routines.forEach((routine) => {
+      if (routine.isActive) routines.push(`#${routine.id} ${routine.name}`);
     });
     return routines;
   }
@@ -264,16 +264,15 @@ class TaskManager {
    * @brief Return all inactive Routines of current TaskManager.
    * @returns Inactive Routines.
    */
-  inactiveRoutines(){
-    let routines : string [] = [];
-    this.routines.forEach((routine)=>{
-      if(!routine.isActive)
-      routines.push(`#${routine.id} ${routine.name}`);
+  inactiveRoutines() {
+    let routines: string[] = [];
+    this.routines.forEach((routine) => {
+      if (!routine.isActive) routines.push(`#${routine.id} ${routine.name}`);
     });
     return routines;
   }
 
-   /*-------------------------------------//ROUTINE CODE//------------------------------------------*/
+  /*-------------------------------------//ROUTINE CODE//------------------------------------------*/
 }
 
 export { TaskManager };

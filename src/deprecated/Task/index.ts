@@ -1,59 +1,54 @@
-
 interface TaskOptions {
-  name?: string
-  repeat?: boolean
-  times?: number
-  onTaskStart?: () => void
-  onTaskStop?: () => void
+  name?: string;
+  repeat?: boolean;
+  times?: number;
+  onTaskStart?: () => void;
+  onTaskStop?: () => void;
 }
 
-enum TaskStatus{
+enum TaskStatus {
   STARTED = 10,
   STOPPED = 20,
-  INVALID = 40
+  INVALID = 40,
 }
 
 class Task {
-  name: string
-  id: number
-  isActive: boolean = false
+  name: string;
+  id: number;
+  isActive: boolean = false;
 
-  onDevTaskStart: () => void = () => {}
-  onDevTaskStop: () => void = () => {}
-  
-  readonly onTaskStart: () => void = () => {}
-  readonly onTaskStop: () => void = () => {}
+  onDevTaskStart: () => void = () => {};
+  onDevTaskStop: () => void = () => {};
 
-  readonly callback: () => any
-  readonly repeat: boolean = false
-  readonly times: number = 0
-  readonly delay: number
-  
-  private interval: any
-  private timeout: any
+  readonly onTaskStart: () => void = () => {};
+  readonly onTaskStop: () => void = () => {};
+
+  readonly callback: () => any;
+  readonly repeat: boolean = false;
+  readonly times: number = 0;
+  readonly delay: number;
+
+  private interval: any;
+  private timeout: any;
   private timesRemaining: number = 0;
 
   constructor(id: number, callback: () => any, delay: number, options?: TaskOptions) {
-
     this.id = id;
     this.name = `Task ${id}`;
 
-    if(options){
-      if(options.name)
-        this.name = options.name;
-      if(options.repeat){
+    if (options) {
+      if (options.name) this.name = options.name;
+      if (options.repeat) {
         this.repeat = options.repeat;
-        if(options.times){
+        if (options.times) {
           this.times = options.times;
           this.timesRemaining = options.times;
         }
       }
-      if(options.onTaskStart)
-        this.onTaskStart = options.onTaskStart;
-      if(options.onTaskStop)
-        this.onTaskStop = options.onTaskStop;
-    } 
-    
+      if (options.onTaskStart) this.onTaskStart = options.onTaskStart;
+      if (options.onTaskStop) this.onTaskStop = options.onTaskStop;
+    }
+
     this.callback = callback;
     this.delay = delay * 1000;
 
@@ -73,7 +68,7 @@ class Task {
     this.onTaskStart();
     this.onDevTaskStart();
     if (this.repeat) {
-      if(this.times){
+      if (this.times) {
         this.interval = setInterval(() => {
           try {
             this.callback();
@@ -81,7 +76,7 @@ class Task {
             console.log(`[ ERROR ] - Task #${this.id} ${this.name} callback presented the followed error: ${e}`);
           }
           this.timesRemaining--;
-          if(!this.timesRemaining){
+          if (!this.timesRemaining) {
             this.stop();
             this.timesRemaining = this.times;
           }
@@ -95,7 +90,6 @@ class Task {
           }
         }, this.delay);
       }
-
     } else {
       this.timeout = setTimeout(() => {
         try {
