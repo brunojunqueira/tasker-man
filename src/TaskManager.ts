@@ -1,98 +1,136 @@
 import { TaskType } from './Task';
 
 interface TaskStack {
-  id: number;
   running: boolean;
   task: TaskType;
 }
 
+interface TaskInfo {
+  id: number;
+  running: boolean;
+  name: string;
+  timesLeft: string | number;
+  interval: string | number;
+}
+
 class TaskManager {
-  private idCounter = 0;
-  private tasks: TaskStack[] = [];
+  private stacks: TaskStack[] = [];
 
   constructor(...tasks: TaskType[]) {
     if (tasks.length > 0) {
       this.append(...tasks);
     }
   }
+
   /**
-   * @brief Add a task on TaskManager.
+   * Add a task on TaskManager.
    * @param tasks Tasks you want to add on TaskManager.
    */
   append(...tasks: TaskType[]) {
-    tasks.map((task) => {
-      const stack = { id: this.idCounter, running: false, task };
+    tasks.forEach((task) => {
+      const stack = { running: false, task };
       task.onTaskStop.add((event) => {
         stack.running = !(event.target.getTimesLeft() === 0);
       });
-      this.tasks.push(stack);
-      this.idCounter++;
+
+      this.stacks.push(stack);
     });
   }
+
   /**
-   * @brief Remove a task from TaskManager by id.
+   * Remove a task from TaskManager by id.
    * @param taskID The task ID.
    */
   remove(taskID: number) {
-    let taskIndex: number | null = null;
-    this.tasks.map((task, index) => {
-      if (task.id === taskID) taskIndex = index;
-    });
-    if (taskIndex) {
-      this.tasks = [...this.tasks.slice(0, taskIndex), ...this.tasks.slice(taskIndex + 1)];
-    } else {
-      throw Error(`Task #${taskID} does not exist.`);
+    const index = this.stacks.findIndex(({ task }) => task.id === taskID);
+
+    if (!index) {
+      throw Error('#' + taskID + ' - Task does not exist!');
     }
+
+    this.stacks = [...this.stacks.slice(0, index), ...this.stacks.slice(index + 1)];
   }
+
   /**
-   * @brief Start a task by id.
+   * Start a task by id.
    * @param taskID The task ID.
    */
   async start(taskID: number) {
-    const [{ running, task }] = this.tasks.filter((_task) => {
-      if (_task.id === taskID) return _task;
-    });
-    if (!task) {
+    const stack = this.stacks.find(({ task }) => task.id === taskID);
+
+    if (!stack) {
       throw Error('#' + taskID + ' - Task does not exist!');
     }
-    if (!running) task.start();
+    if (!stack.running) stack.task.start();
   }
 
   /**
-   * @brief Abort a task execution by the task id.
+   * Starts all tasks that are not running at the moment.
+   */
+  async startAll() {
+    this.stacks.map((stack) => {
+      if (!stack.running) stack.task.start();
+    });
+  }
+
+  /**
+   * Abort a task execution by the task id.
    * @param taskID The task ID.
    */
   async abort(taskID: number) {
-    const [{ running, task }] = this.tasks.filter((_task) => {
-      if (_task.id === taskID) return _task;
-    });
-    if (!task) throw Error('#' + taskID + ' - Task does not exist!');
-    if (!running) {
+    const stack = this.findStack(taskID);
+    if (!stack.running) {
       throw Error('#' + taskID + ' - Task is already stopped!');
     }
-    task.abort();
+    stack.task.abort();
   }
 
   /**
-   * @brief Get a task on TaskManager by id.
+   * Get a task on TaskManager by id.
    * @returns a Task.
    */
   task(taskID: number): TaskType {
-    const [{ task }] = this.tasks.filter((_task) => {
-      if (_task.id === taskID) return _task;
-    });
-    return task;
+    const stack = this.findStack(taskID);
+    if (!stack) throw Error('#' + taskID + ' - Task does not exist!');
+    return stack.task;
   }
+
+  /**
+   * Get all tasks on `TaskManager` and formats it in a more readable way.
+   * @returns the tasks controlled by this `TaskManager`.
+   */
+  getTasks(): TaskInfo[] {
+    return this.stacks.map<TaskInfo>((t) => {
+      let name = `Task #${t.task.id}`;
+
+      if (t.task.name) name = t.task.name;
+      return {
+        id: t.task.id,
+        name,
+        running: t.running,
+        timesLeft: t.task.getTimesLeft(),
+        interval: t.task.getInterval(),
+      };
+    });
+  }
+
+  /**
+   * Return tasks stack of this instance.
+   * @returns the tasks stacks.
+   */
+  getTasksStack(): TaskStack[] {
+    return this.stacks;
+  }
+
   /**
    * Get all tasks on TaskManager with a especific name.
    * @returns a Task array.
    */
   getIdsByName(name: string): number[] {
-    const stacks = this.tasks.filter(({ task }) => {
+    const stacks = this.stacks.filter(({ task }) => {
       if (task.name === name) return task;
     });
-    const tasks = stacks.map(({ id }) => id);
-    return tasks;
+    return stacks.map<number>(({ task }) => task.id);
   }
 
   /**
@@ -100,39 +138,71 @@ class TaskManager {
    * @returns a Task array.
    */
   getTasksByName(name: string): TaskType[] {
-    const stacks = this.tasks.filter(({ task }) => {
+    const stacks = this.stacks.filter(({ task }) => {
       if (task.name === name) return task;
     });
     const tasks = stacks.map(({ task }) => task);
     return tasks;
   }
+
   /**
    * Get all active tasks running in TaskManager.
    * @returns a Task array.
    */
-  activeTasks(): TaskType[] {
-    const stacks = this.tasks.filter((stack) => {
-      if (stack.running) return stack;
-    });
-    const tasks = stacks.map(({ task }) => task);
+  activeTasks(): TaskInfo[] {
+    // filter stack by tasks that are running
+    const stacks = this.stacks.filter((stack) => stack.running);
+    return stacks.map<TaskInfo>(({ task }) => {
+      let name = `Task #${task.id}`;
 
-    return tasks;
+      if (task.name) name = task.name;
+
+      return {
+        id: task.id,
+        name,
+        running: true,
+        timesLeft: task.getTimesLeft(),
+        interval: task.getInterval(),
+      };
+    });
   }
+
   /**
    * Get all inactive tasks running in TaskManager.
    * @returns a Task array.
    */
-  inactiveTasks(): TaskType[] {
-    const stacks = this.tasks.filter((stack) => {
-      if (!stack.running) return stack;
-    });
-    const tasks = stacks.map(({ task }) => task);
+  inactiveTasks(): TaskInfo[] {
+    // filter stack by tasks that are not running
+    const stacks = this.stacks.filter((stack) => !stack.running);
+    return stacks.map<TaskInfo>(({ task }) => {
+      let name = `Task #${task.id}`;
 
-    return tasks;
+      if (task.name) name = task.name;
+
+      return {
+        id: task.id,
+        name,
+        running: true,
+        timesLeft: task.getTimesLeft(),
+        interval: task.getInterval(),
+      };
+    });
+  }
+
+  /**
+   * Shorthand for find a task by its id on the task stack. Throws an error
+   * if stack is not found.
+   */
+  private findStack(taskID: number): TaskStack {
+    const stack = this.stacks.find(({ task }) => task.id === taskID);
+    if (!stack) throw Error('#' + taskID + ' - Task does not exist!');
+
+    return stack;
   }
 }
+
 /**
- * @brief Create a new Task Manager.
+ *  Create a new Task Manager.
  * @param [...tasks] - Tasks to append on TaskManager.
  * @returns a new TaskManager instance.
  */

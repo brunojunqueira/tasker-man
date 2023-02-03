@@ -15,13 +15,17 @@ export interface TaskOptions {
    */
   repeat?: number | 'endlessly';
   /**
-   * Time task will take to run repeat. Follow DTR.
+   * Time task will take to run repeat. Follow SST.
    */
   interval?: string | number;
   /**
-   * Time task will take to run in the first time. Follow DTR.
+   * Time task will take to run in the first time. Follow SST.
    */
   delay?: string | number;
+  /**
+   * Data to be passed to the task.
+   */
+  data?: any;
 }
 
 interface PrivateTaskOptions {
@@ -38,20 +42,27 @@ enum TaskStatus {
   ABORTED = 3,
 }
 
-class Task {
-  readonly callback: () => void;
-  readonly name?: string;
-  readonly options: PrivateTaskOptions;
+/** The id digits to calculate the next task id. */
+const idMaxDigits = 12;
 
+class Task {
+  readonly id: number;
+  readonly callback: (data: any) => void;
+  readonly name?: string;
+
+  private readonly options: PrivateTaskOptions;
   private status: TaskStatus;
   private timesLeft: number | 'endlessly';
   private timeout: number;
   private first: boolean;
+  public data: Record<string, any> = {};
 
   onTaskStart: EventHandler<this>;
   onTaskStop: EventHandler<this>;
 
-  constructor(callback: () => void, options?: TaskOptions) {
+  constructor(callback: (data: any) => void, options?: TaskOptions) {
+    this.id = this.getNewId();
+
     this.callback = callback;
 
     this.options = {
@@ -60,11 +71,13 @@ class Task {
       delay: 0,
       interval: 0,
     };
+
     if (options) {
-      if (options.name) this.options.name = options.name;
+      if (options.name) this.name = options.name;
       if (options.delay) this.options.delay = options.delay;
       if (options.interval) this.options.interval = options.interval;
       if (options.repeat) this.options.repeat = options.repeat;
+      if (options.data) this.data = options.data;
     }
 
     this.status = TaskStatus.STOPPED;
@@ -73,11 +86,15 @@ class Task {
 
     this.timesLeft = typeof this.options.repeat === 'string' ? this.options.repeat : this.options.repeat + 1;
 
-    this.onTaskStart = new EventHandler((event) => null, this);
-    this.onTaskStop = new EventHandler((event) => null, this);
+    this.onTaskStart = new EventHandler(() => null, this);
+    this.onTaskStop = new EventHandler(() => null, this);
   }
 
-  private resetTimesLeft() {
+  private getNewId(): number {
+    return Math.floor(Math.random() * Math.pow(10, idMaxDigits));
+  }
+
+  private resetTimesLeft(): void {
     if (this.options) {
       if (this.options.repeat) {
         this.timesLeft = typeof this.options.repeat === 'string' ? this.options.repeat : this.options.repeat + 1;
@@ -85,12 +102,12 @@ class Task {
     }
   }
 
-  async start() {
+  async start(): Promise<void> {
     //  Try to set timeout and start the task.
     try {
       this.timeout = setTimeout(() => {
         // Execute Task Callback.
-        this.callback();
+        this.callback(this.data);
         if (typeof this.timesLeft === 'number') this.timesLeft--;
         // Stop task execution or restart the task.
         this.stop();
@@ -111,7 +128,7 @@ class Task {
     }
   }
 
-  async stop() {
+  async stop(): Promise<void> {
     // Stop task if timesLeft bigger than 0 or task is endlessly or restart the task.
     if (this.timesLeft > 0 || this.timesLeft === 'endlessly') {
       // Try to set timeout and restart the task.
@@ -142,7 +159,7 @@ class Task {
     }
   }
 
-  async abort(error?: boolean) {
+  async abort(error?: boolean): Promise<void> {
     // Clear task timeout.
     clearTimeout(this.timeout);
     // Set Task Status.
@@ -152,18 +169,29 @@ class Task {
     // Reset timesLeft.
     this.resetTimesLeft();
   }
+
   /**
-   * Get the times left to task end. If endlessly, will return endlessly.
+   * Get the times left to task end. If endlessly, will return `"endlessly"`.
    * @returns Times Left or Endlessly
    */
-  getTimesLeft() {
+  getTimesLeft(): number | 'endlessly' {
     return this.timesLeft;
   }
+
+  /**
+   * Get the interval of this task. Returns `none` if is just an once task or/and
+   * don't hav.
+   * @returns The interval set or none
+   */
+  getInterval(): string | number {
+    return this.options.interval;
+  }
+
   /**
    * Get Task Status
    * @returns Task Status
    */
-  getStatus() {
+  getStatus(): TaskStatus {
     return this.status;
   }
 }
@@ -171,16 +199,14 @@ class Task {
 type TaskType = Task;
 
 /**
- * @description Create a new Task.
+ * Create a new Task.
  * @param [callback] - Method that task will run.
  * @param [options] - Task options that receive *repeat*, *interval* and/or *delay*.
- * @subparam **interval** - Time it takes to task run again in next repeat.
- * @subparam **delay** - Time it takes to task run on the first start.
  * @format To *interval* and *delay* use "-yy -mm -dd -h -m -s" format. You might skip some times and don't use spaces: "-dd-m". But you should to keep this order.
  * @param [name] - Task name.
  * @returns A new Task instance.
  */
-function createTask(callback: () => void, options?: TaskOptions): Task {
+function createTask(callback: (data: any) => void, options?: TaskOptions): Task {
   return new Task(callback, options);
 }
 

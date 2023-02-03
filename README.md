@@ -28,7 +28,7 @@ Note: The old methods of TaskerMan are deprecated and I strongly recommend to us
   - [abort](#abort)
 - [Tasks](#tasks)
 	- [createTask](#createTask())
-- [DTR](#dtr)
+- [SST](#sst)
 
 ## Installation
 
@@ -46,9 +46,32 @@ yarn add tasker-man
 
 ## Usage
 
-#### import
 ```js
-import { createTask, createTaskManager } from "tasker-man";
+const { TaskManager, createTask } = require('tasker-man');
+
+const uniqueTask = createTask(() => console.log("I'll execute once!"));
+
+const repetitiveTask = createTask(() => console.log("I'll execute a few times before stop"), {
+	repeat: 5,
+	interval: '1s',
+	name: '5 times task'	
+});
+
+const endlessTask = createTask(() => console.log("I'll execute until somebody stop me"), {
+	repeat: 'endlessly',
+	interval: '10s',
+	name: 'endlessly task'
+})
+
+// Creates the TaskManager with some tasks
+const myManager = createTaskManager(uniqueTask, repetitiveTask);
+
+// You can add some tasks to an already create TaskManager with `append`
+myManager.append(endlessTask);
+
+// You can execute a single task by its id
+myManager.start(myManager)
+
 ```
 
 # Documentation
@@ -124,6 +147,8 @@ manager.remove(0);
 | `id`        | `number`   | Yes      | Task ID on Task Manager.  |
 
 **OBS: Task ID Can be got by using 'getIdsByName( )' method!**
+
+
 
 ---
 ### getIdsByName()
@@ -211,7 +236,7 @@ SST or *Simple Sequential Time* is a time set rule created to supply big time in
 
 ### Format
 
-DTR use a "-yy -mm -dd -h -m -s" format.
+SST use a "-yy -mm -dd -h -m -s" format.
 
 | Symbol | Reference |
 |:-------|:----------|
@@ -225,7 +250,7 @@ DTR use a "-yy -mm -dd -h -m -s" format.
 ---
 ### Usage
 
-You can use DTR with any time you need, since you put the time symbols in order `year -> month -> day -> hour -> minute -> second`.
+You can use SST with any time you need, since you put the time symbols in order `year -> month -> day -> hour -> minute -> second`.
 
 Example:
 
