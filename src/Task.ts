@@ -1,93 +1,59 @@
 import { EventHandler } from './util/event';
 import { parseTime } from './util/time';
-
-/**
- * Task Parameter Options
- */
-export interface TaskOptions {
-  /**
-   * Task Name.
-   */
-  name?: string;
-  /**
-   * Times task will repeat. If "endlessly", TaskManager will run the task forever.
-   * @attention NOTE THAT IT'S A REPEAT PROPERTY, TASK WILL RUN ONCE, AFTER THAT REPEATS BEGIN, SO IF YOU PUT 5 REPEATS, TASK WILL RUN 6 TIMES.
-   */
-  repeat?: number | 'endlessly';
-  /**
-   * Time task will take to run repeat. Follow SST.
-   */
-  interval?: string | number;
-  /**
-   * Time task will take to run in the first time. Follow SST.
-   */
-  delay?: string | number;
-  /**
-   * Data to be passed to the task.
-   */
-  data?: any;
-}
-
-interface PrivateTaskOptions {
-  name: string;
-  repeat: number | 'endlessly';
-  interval: string | number;
-  delay: string | number;
-}
-
-enum TaskStatus {
-  STOPPED = 0,
-  RUNNING = 1,
-  ERROR = 2,
-  ABORTED = 3,
-}
+import { TaskCallback, TaskOptions, TaskStatus, Task as ITask } from './types';
 
 /** The id digits to calculate the next task id. */
 const idMaxDigits = 12;
 
-class Task {
+class Task implements ITask {
   readonly id: number;
-  readonly callback: (data: any) => void;
-  readonly name?: string;
+  readonly callback: TaskCallback;
+  readonly name: string;
 
-  private readonly options: PrivateTaskOptions;
-  private status: TaskStatus;
   private timesLeft: number | 'endlessly';
+  private status: TaskStatus;
   private timeout: number;
   private first: boolean;
-  public data: Record<string, any> = {};
 
-  onTaskStart: EventHandler<this>;
-  onTaskStop: EventHandler<this>;
+  public data: Record<string, any>;
+  public repeat: number | 'endlessly';
+  public interval: string | number;
+  public delay: string | number;
 
-  constructor(callback: (data: any) => void, options?: TaskOptions) {
+  onTaskStart: EventHandler;
+  onTaskStop: EventHandler;
+  onTaskError: EventHandler;
+
+  constructor(callback: TaskCallback, options?: TaskOptions) {
     this.id = this.getNewId();
 
     this.callback = callback;
 
-    this.options = {
-      name: '',
-      repeat: 0,
-      delay: 0,
-      interval: 0,
-    };
+    this.name = `Task ${this.id}`;
+    this.delay = 0;
+    this.interval = 0;
+    this.repeat = 0;
+    this.data = {};
 
     if (options) {
-      if (options.name) this.name = options.name;
-      if (options.delay) this.options.delay = options.delay;
-      if (options.interval) this.options.interval = options.interval;
-      if (options.repeat) this.options.repeat = options.repeat;
-      if (options.data) this.data = options.data;
+      const { name, delay, interval, repeat, data } = options;
+
+      if (name) this.name = name;
+      if (delay) this.delay = delay;
+      if (interval) this.interval = interval;
+      if (repeat) this.repeat = repeat;
+      if (data) this.data = data;
     }
 
     this.status = TaskStatus.STOPPED;
     this.first = true;
     this.timeout = setTimeout(() => null);
 
-    this.timesLeft = typeof this.options.repeat === 'string' ? this.options.repeat : this.options.repeat + 1;
+    this.timesLeft = typeof this.repeat === 'string' ? this.repeat : this.repeat + 1;
 
-    this.onTaskStart = new EventHandler(() => null, this);
-    this.onTaskStop = new EventHandler(() => null, this);
+    this.onTaskStart = new EventHandler();
+    this.onTaskStop = new EventHandler();
+    this.onTaskError = new EventHandler();
   }
 
   private getNewId(): number {
@@ -95,10 +61,8 @@ class Task {
   }
 
   private resetTimesLeft(): void {
-    if (this.options) {
-      if (this.options.repeat) {
-        this.timesLeft = typeof this.options.repeat === 'string' ? this.options.repeat : this.options.repeat + 1;
-      }
+    if (this.repeat) {
+      this.timesLeft = typeof this.repeat === 'string' ? this.repeat : this.repeat + 1;
     }
   }
 
@@ -111,7 +75,7 @@ class Task {
         if (typeof this.timesLeft === 'number') this.timesLeft--;
         // Stop task execution or restart the task.
         this.stop();
-      }, parseTime(this.first ? this.options.delay : 0));
+      }, parseTime(this.first ? this.delay : 0));
 
       // Set First Time false.
       this.first = false;
@@ -120,11 +84,10 @@ class Task {
       this.status = TaskStatus.RUNNING;
 
       // Dispatch Start Event
-      this.onTaskStart.call();
+      this.onTaskStart.call(this);
     } catch {
       // Set Task Status.
-      this.abort(true);
-      throw Error('Error on Start Task');
+      this.abort(new Error('Error on Stop Task'));
     }
   }
 
@@ -133,17 +96,16 @@ class Task {
     if (this.timesLeft > 0 || this.timesLeft === 'endlessly') {
       // Try to set timeout and restart the task.
       try {
-        this.timeout = setTimeout(() => this.start(), parseTime(this.options.interval));
+        this.timeout = setTimeout(() => this.start(), parseTime(this.interval));
 
         // Set Task Status.
         this.status = TaskStatus.STOPPED;
 
         // Dispatch Stop Event
-        this.onTaskStop.call();
+        this.onTaskStop.call(this);
       } catch {
         // Set Task Status.
-        this.abort(true);
-        throw Error('Error on Stop Task');
+        this.abort(new Error('Error on Stop Task'));
       }
     } else {
       // Clear task timeout.
@@ -151,7 +113,7 @@ class Task {
       // Set Task Status.
       this.status = TaskStatus.STOPPED;
       // Dispatch Stop Event
-      this.onTaskStop.call();
+      this.onTaskStop.call(this);
       // Reset timesLeft.
       this.resetTimesLeft();
       // Reset First Time Boolean
@@ -159,44 +121,28 @@ class Task {
     }
   }
 
-  async abort(error?: boolean): Promise<void> {
+  async abort(error?: Error): Promise<void> {
     // Clear task timeout.
     clearTimeout(this.timeout);
     // Set Task Status.
     this.status = error ? TaskStatus.ERROR : TaskStatus.ABORTED;
+    if (error) {
+      this.onTaskError.call(this, error);
+    }
     // Dispatch Stop Event
-    this.onTaskStop.call();
+    this.onTaskStop.call(this);
     // Reset timesLeft.
     this.resetTimesLeft();
   }
 
-  /**
-   * Get the times left to task end. If endlessly, will return `"endlessly"`.
-   * @returns Times Left or Endlessly
-   */
-  getTimesLeft(): number | 'endlessly' {
+  getTimesLeft() {
     return this.timesLeft;
   }
 
-  /**
-   * Get the interval of this task. Returns `none` if is just an once task or/and
-   * don't hav.
-   * @returns The interval set or none
-   */
-  getInterval(): string | number {
-    return this.options.interval;
-  }
-
-  /**
-   * Get Task Status
-   * @returns Task Status
-   */
-  getStatus(): TaskStatus {
+  getStatus() {
     return this.status;
   }
 }
-
-type TaskType = Task;
 
 /**
  * Create a new Task.
@@ -206,8 +152,8 @@ type TaskType = Task;
  * @param [name] - Task name.
  * @returns A new Task instance.
  */
-function createTask(callback: (data: any) => void, options?: TaskOptions): Task {
+function createTask<DataType = any>(callback: TaskCallback<DataType>, options?: TaskOptions<DataType>): Task {
   return new Task(callback, options);
 }
 
-export { createTask, TaskType };
+export { createTask, Task };

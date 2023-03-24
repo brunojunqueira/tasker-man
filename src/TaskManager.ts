@@ -1,4 +1,5 @@
-import { TaskType } from './Task';
+import { Task as TaskType } from './types';
+import { Task } from './Task';
 
 interface TaskStack {
   running: boolean;
@@ -109,7 +110,7 @@ class TaskManager {
         name,
         running: t.running,
         timesLeft: t.task.getTimesLeft(),
-        interval: t.task.getInterval(),
+        interval: t.task.interval,
       };
     });
   }
@@ -162,7 +163,7 @@ class TaskManager {
         name,
         running: true,
         timesLeft: task.getTimesLeft(),
-        interval: task.getInterval(),
+        interval: task.interval,
       };
     });
   }
@@ -184,7 +185,7 @@ class TaskManager {
         name,
         running: true,
         timesLeft: task.getTimesLeft(),
-        interval: task.getInterval(),
+        interval: task.interval,
       };
     });
   }
