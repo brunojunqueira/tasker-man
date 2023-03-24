@@ -2,9 +2,8 @@
 
 [![NPM version](http://img.shields.io/npm/v/tasker-man.svg)](https://www.npmjs.com/package/tasker-man)
 [![Downloads](https://img.shields.io/npm/dm/tasker-man.svg)](https://www.npmjs.com/package/tasker-man)
-[![License](https://img.shields.io/npm/l/tasker-man.svg)](https://github.com/brunojunqueira/tasker-man/blob/main/LICENSE)
-
-[![NPM](https://nodei.co/npm/tasker-man.png)](https://nodei.co/npm/tasker-man/)
+[![B[![License](https://img.shields.io/npm/l/tasker-man.svg)](https://github.com/brunojunqueira/tasker-man/blob/main/LICENSE)
+PM](https://nodei.co/npm/tasker-man.png)](https://nodei.co/npm/tasker-man/)
 
 A powerful and simple task manager.
 
