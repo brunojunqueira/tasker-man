@@ -1,4 +1,4 @@
-import { Task } from './types';
+import { Task } from '../types';
 
 // needs to be put in task to throw it.
 
