@@ -51,7 +51,7 @@ yarn add tasker-man
 ## Usage
 
 ```js
-const { TaskManager, createTask } = require('tasker-man');
+const { TaskManager, createTaskManager, createTask } = require('tasker-man');
 
 const uniqueTask = createTask(() => console.log("I'll execute once!"));
 
