@@ -74,7 +74,7 @@ const myManager = createTaskManager(uniqueTask, repetitiveTask);
 myManager.append(endlessTask);
 
 // You can execute a single task by its id
-myManager.start(myManager);
+myManager.start(uniqueTask.id);
 ```
 
 # Documentation
